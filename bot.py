@@ -148,6 +148,17 @@ def main() -> int:
 
     if premier_lancement:
         print("Premier lancement : offres existantes enregistrées sans alerte.")
+        pour_moi = [o for o in offres
+                    if any(marque_correspond(m, ms)
+                           for m in marques_suivies
+                           for ms in marques_de_l_offre(o["marques"]))]
+        envoyer_telegram(
+            "✅ <b>Bot ODR connecté !</b>\n"
+            f"{len(offres)} offres en ligne sur anti-crise.fr, "
+            f"dont {len(pour_moi)} pour tes marques.\n"
+            f"Je surveille : {html.escape(', '.join(marques_suivies))}\n"
+            "Tu seras alerté à chaque nouvelle offre."
+        )
     else:
         # du plus ancien au plus récent pour recevoir les alertes dans l'ordre
         for offre in reversed(nouvelles):
