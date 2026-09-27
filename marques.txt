@@ -1,0 +1,11 @@
+# Une marque par ligne. Les fautes de frappe, accents et majuscules ne comptent pas.
+# Les lignes qui commencent par # sont ignorées.
+Braun
+Black et Decker
+Bosch
+Krups
+Philips
+Karcher
+Oral b
+Chicco
+Hasbro
