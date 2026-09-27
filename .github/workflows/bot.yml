@@ -1,0 +1,41 @@
+name: Bot ODR
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # toutes les 30 minutes
+  workflow_dispatch:          # bouton "Run workflow" pour lancer à la main
+
+permissions:
+  contents: write             # pour enregistrer offres_vues.json
+
+concurrency:
+  group: bot-odr
+  cancel-in-progress: false
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Vérifier les offres
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bot.py
+
+      - name: Enregistrer les offres vues
+        run: |
+          git config user.name "bot-odr"
+          git config user.email "bot-odr@users.noreply.github.com"
+          git add offres_vues.json
+          git diff --staged --quiet || git commit -m "Mise à jour des offres vues"
+          git push
